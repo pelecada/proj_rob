@@ -17,7 +17,7 @@ nums = np.array([0,0,0,0])
 for i in range(4): nums[i] = float(text[i])
 
 MoveTo(c, nums)
-ForwKin(nums)
+print(ForwKin(nums))
 
 c.wait_ready()
 c.rcon.close()
