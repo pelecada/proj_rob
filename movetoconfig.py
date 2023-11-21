@@ -4,7 +4,6 @@ DirImportFn()
 import numpy as np
 from robotBosch import robotBosch
 from CRS_commander import Commander
-from robotics_toolbox.core import SE2
 
 from proj_rob.model import Model
 
@@ -15,10 +14,10 @@ c.open_comm("/dev/ttyUSB0",speed = 19200)
 c.wait_ready()
 
 text = input().split()
-nums = np.array([0,0,0])
-for i in range(3): nums[i] = float(text[i])
+nums = np.array([0,0,0,0])
+for i in range(4): nums[i] = float(text[i])
 
-m.MoveTo(c, m.ClosestInvConfig(SE2([nums[0],nums[1]],nums[2])))
+m.MoveTo(c, nums)
 print(m.ForwKin(nums))
 
 c.wait_ready()

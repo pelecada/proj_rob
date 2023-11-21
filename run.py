@@ -6,10 +6,11 @@ from robotBosch import robotBosch
 from CRS_commander import Commander
 from robotics_toolbox.core import SE2
 
-from movement import MoveTo
+from proj_rob.model import Model
 
 rob = robotBosch()
 c = Commander(rob) 
+m = Model(False)
 c.open_comm("/dev/ttyUSB0",speed = 19200)
 c.wait_ready()
 
@@ -24,7 +25,7 @@ deg = np.array([0,0,0,0]) #deg, deg, mm, deg
 for i in range(4):
     #c.wait_ready()
     deg[i] = tgt[i]
-    MoveTo(deg)
+    m.MoveTo(deg)
 
 """
 resp = c.query('COORDAP')
