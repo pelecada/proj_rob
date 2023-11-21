@@ -2,7 +2,6 @@ from dirimport import DirImportFn
 DirImportFn()
 
 import numpy as np
-from robotBosch import robotBosch
 from CRS_commander import Commander
 
 from robotics_toolbox.core import SE2
@@ -55,3 +54,7 @@ class Model():
         
     def ClosestInvConfig(self, target):
         return self.GetConfig(self.ClosestInvKin(target))
+    
+    def DetectConfigSwitch(self, config): #probably incomplete
+        return (config[1] > 0 and self.GetConfig()[1] < 0) or (config[1] < 0 and self.GetConfig()[1] > 0)
+    

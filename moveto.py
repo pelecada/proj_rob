@@ -6,7 +6,7 @@ from robotBosch import robotBosch
 from CRS_commander import Commander
 from robotics_toolbox.core import SE2
 
-from proj_rob.model import Model
+from model import Model
 
 rob = robotBosch()
 c = Commander(rob) 

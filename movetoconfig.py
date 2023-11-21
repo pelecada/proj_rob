@@ -5,7 +5,7 @@ import numpy as np
 from robotBosch import robotBosch
 from CRS_commander import Commander
 
-from proj_rob.model import Model
+from model import Model
 
 rob = robotBosch()
 c = Commander(rob) 
