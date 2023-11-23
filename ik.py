@@ -10,7 +10,7 @@ def LimitPi(q):
                 qi[j] = qi[j] + 2*np.pi
     return q
 
-def ClosestIK(robot: RobotBosch ,target, current):
+def SortIK(robot: RobotBosch ,target, current):
     q = LimitPi(robot.ik(target[0],target[1],target[2],target[3]))
     def Score(array):
         num = 0
@@ -18,5 +18,5 @@ def ClosestIK(robot: RobotBosch ,target, current):
         return num
     q.sort(key = Score)
     if len(q) == 0: #No solution
-        return [None,None,None,None]
-    return q[0]
+        return [[None,None,None,None]]
+    return q
