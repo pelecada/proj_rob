@@ -1,8 +1,12 @@
+import array
+from pyexpat.errors import XML_ERROR_ABORTED
+from turtle import mode
 from ctu_bosch_sr450 import RobotBosch
 import numpy as np
 
 from line import Line
 from ik import SortIK
+import matplotlib.pyplot as plt
 
 def GetOrientation(q):
     return np.sign(q[1])
@@ -38,5 +42,22 @@ def Plan(line:Line, interdist):
 if __name__ == "__main__":
     model = RobotBosch(tty_dev=None)
     p = Line([[0.45,0],[0.25,0],[0.35,0.1]])
-    for pi in Plan(p,0.01):
-        print(pi, GetOrientation(pi), model.fk(pi))
+    
+    fig: plt.Figure = plt.figure()
+    ax_image: plt.Axes = fig.add_subplot(111)
+    ax_image.grid(True)
+
+    x,y = [],[]
+    for pi in Plan(p, 0.01):
+        #print(pi, GetOrientation(pi), model.fk(pi))
+        x.append(model.fk(pi)[0])
+        y.append(model.fk(pi)[1])
+    ax_image.plot(x[:],y[:],'x', color = 'tab:red')
+
+    x_arr, y_arr = [],[]
+    for point in p.points:
+        x_arr.append(point[0])
+        y_arr.append(point[1])
+    
+    ax_image.plot(x_arr[:],y_arr[:],'o', color = 'tab:green')
+    plt.show()
