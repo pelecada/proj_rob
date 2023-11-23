@@ -1,5 +1,5 @@
 from ctu_bosch_sr450 import RobotBosch
-from path import Path
+from line import Line
 import numpy as np
 
 def LimitPi(q):
