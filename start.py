@@ -4,7 +4,6 @@ import numpy as np
 from line import Line
 from ik import ClosestIK, LimitPi
 
-
 robot = RobotBosch(tty_dev=None)  # initialize object without connection to the robot
 x, y, z, phi = robot.fk([0, 0, 0, 0])  # compute forward kinematics
 #print(x,y,z,phi)
