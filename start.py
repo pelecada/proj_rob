@@ -1,5 +1,5 @@
 from ctu_bosch_sr450 import RobotBosch
-from path import Path
+from line import Line
 import numpy as np
 
 def LimitPi(q):
@@ -31,7 +31,7 @@ x, y, z, phi = robot.fk([0, 0, 0, 0])  # compute forward kinematics
 #print(x,y,z,phi)
 q = robot.ik(x, y, z, phi)  # compute inverse kinematics, get the first solution
 
-p = Path([[0.45,0],[0.2,0],[0.35,0.1]]) #y = 0 : x <0.25,0,45>, h <0.17,0.5>
+p = Line([[0.45,0],[0.2,0],[0.35,0.1]]) #y = 0 : x <0.25,0,45>, h <0.17,0.5>
 p.Interpolate(10)
 
 current = LimitPi(q)[0]

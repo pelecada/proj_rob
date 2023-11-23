@@ -1,4 +1,4 @@
-class Path():
+class Line():
     def __init__(self,
         points) -> None:
         self.points = points
@@ -15,6 +15,3 @@ class Path():
                 point = [this[0] + t/point_number*(that[0]-this[0]),this[1] + t/point_number*(that[1]-this[1])]
                 pointsnew.append(point)
         self.points = pointsnew
-
-    #check continuity/validity of path with model
-    #create instructions for path, run it
