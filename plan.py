@@ -44,19 +44,18 @@ def vizualization(model: RobotBosch, q):
     fig: plt.Figure = plt.figure()
     ax_image: plt.Axes = fig.add_subplot(111)
     ax_image.grid(True)
-    x,y = [],[]
-    color = ['' , 'tab:green', 'tab:red']
+    color = ['tab:blue' , 'tab:green', 'tab:red']
 
     for qi in q:
-        x.append(model.fk(qi)[0])
-        y.append(model.fk(qi)[1])
-    ax_image.plot(x[:],y[:],'x', color = color[int(GetOrientation(q[-1]))])
+        x = model.fk(qi)[0]
+        y = model.fk(qi)[1]
+        ax_image.plot(x,y,'x', color = color[int(GetOrientation(qi))])
 
     plt.show() #block = False
 
 if __name__ == "__main__":
     model = RobotBosch(tty_dev=None)
-    p = Line([[0.4,0],[0,0.4]])
+    p = Line([[0, -0.4],[0.4,0],[0,0.4]])
     
     #fig: plt.Figure = plt.figure()
     #ax_image: plt.Axes = fig.add_subplot(111)
