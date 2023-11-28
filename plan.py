@@ -6,7 +6,7 @@ from ik import SortIK
 import matplotlib.pyplot as plt
 
 def GetOrientation(q):
-    return np.sign(q[1])
+    return -np.sign(q[1])
 
 def IKinOrientation(model: RobotBosch, c,p,current):
     qs = SortIK(model, [p[0],p[1],0.5,0],current)
