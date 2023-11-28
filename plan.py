@@ -17,6 +17,8 @@ def IKinOrientation(model: RobotBosch, c,p,current):
             return q
     return []
 
+def ChangeConfig():
+    ...
 
 def Plan(line:Line, interdist):
     line.Interpolate(interdist)
@@ -38,6 +40,13 @@ def Plan(line:Line, interdist):
             break
 
     vizualization(model, q)
+
+    for i in range(len(q)-1):
+        c = GetOrientation(q[i])
+        c_next = GetOrientation(q[i+1])        
+        if c != c_next and not(c == 0 or c_next == 0):
+            ...
+            #v pode c chcem najit konfig c_nect pomoci pristupu v přímce o 1 menší a poté přidat do přimky nové body (aby se rovnaly délky)
     return q
 
 def vizualization(model: RobotBosch, q):
