@@ -33,27 +33,30 @@ def Plan(line:Line, interdist):
                 break
             else:
                 q.append(qp)
-        vizualization(model, q)
-        return q
-    
-    
-    return None
 
-def vizualization(model: RobotBosch, q, ):
+        if len(q) == len(line.points)+1:
+            break
+
+    vizualization(model, q)
+    return q
+
+def vizualization(model: RobotBosch, q):
     fig: plt.Figure = plt.figure()
     ax_image: plt.Axes = fig.add_subplot(111)
     ax_image.grid(True)
     x,y = [],[]
+
     for qi in q:
         x.append(model.fk(qi)[0])
         y.append(model.fk(qi)[1])
+
     ax_image.plot(x[:],y[:],'x', color = 'tab:red')
 
     plt.show() #block = False
 
 if __name__ == "__main__":
     model = RobotBosch(tty_dev=None)
-    p = Line([[0.45,0],[0.25,0],[0.35,0.1]])
+    p = Line([[0.4,0],[0,-0.4]])
     
     #fig: plt.Figure = plt.figure()
     #ax_image: plt.Axes = fig.add_subplot(111)
