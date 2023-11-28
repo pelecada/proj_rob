@@ -45,12 +45,12 @@ def vizualization(model: RobotBosch, q):
     ax_image: plt.Axes = fig.add_subplot(111)
     ax_image.grid(True)
     x,y = [],[]
+    color = ['' , 'tab:green', 'tab:red']
 
     for qi in q:
         x.append(model.fk(qi)[0])
         y.append(model.fk(qi)[1])
-
-    ax_image.plot(x[:],y[:],'x', color = 'tab:red')
+    ax_image.plot(x[:],y[:],'x', color = color[int(GetOrientation(q[-1]))])
 
     plt.show() #block = False
 
