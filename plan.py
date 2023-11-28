@@ -1,6 +1,3 @@
-import array
-from pyexpat.errors import XML_ERROR_ABORTED
-from turtle import mode
 from ctu_bosch_sr450 import RobotBosch
 import numpy as np
 
@@ -58,7 +55,7 @@ def vizualization(model: RobotBosch, q):
         y_arr.append(point[1])
     
     ax_image.plot(x_arr[:],y_arr[:],'o', color = 'tab:green')
-    plt.show()
+    plt.show() #block = False
 
 if __name__ == "__main__":
     model = RobotBosch(tty_dev=None)
