@@ -11,12 +11,18 @@ def LimitPi(q):
     return q
 
 def SortIK(robot: RobotBosch ,target, current):
+    if len(current) == 0:
+        return []
+    
     q = LimitPi(robot.ik(target[0],target[1],target[2],target[3]))
+    
     def Score(array):
         num = 0
-        for i in range(len(array)): num += (array[i] - current[i])**2
+        for i in range(len(array)):
+            num += (array[i] - current[i])**2
         return num
+    
     q.sort(key = Score)
     if len(q) == 0: #No solution
-        return [[None,None,None,None]]
+        return []
     return q

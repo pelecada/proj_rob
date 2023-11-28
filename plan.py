@@ -15,7 +15,7 @@ def IKinOrientation(model: RobotBosch, c,p,current):
     for q in qs:
         if GetOrientation(q) == c or GetOrientation(q) == 0:
             return q
-    return [None,None,None,None]
+    return []
 
 
 def Plan(line:Line, interdist):
@@ -28,7 +28,7 @@ def Plan(line:Line, interdist):
         q = [[0,0,0,0]]
         for p in line.points: #for each point on line
             qp = IKinOrientation(model, c,p,q[-1]) #try finding q in configuration
-            if p[0] == None:
+            if len(qp) == 0:
                 print("No IK")
                 break
             else:
@@ -56,7 +56,7 @@ def vizualization(model: RobotBosch, q):
 
 if __name__ == "__main__":
     model = RobotBosch(tty_dev=None)
-    p = Line([[0.4,0],[0,-0.4]])
+    p = Line([[0.4,0],[0,0.4]])
     
     #fig: plt.Figure = plt.figure()
     #ax_image: plt.Axes = fig.add_subplot(111)
