@@ -39,7 +39,7 @@ def Plan(line:Line, interdist):
     
     return None
 
-def vizualization(model: RobotBosch, q):
+def vizualization(model: RobotBosch, q, ):
     fig: plt.Figure = plt.figure()
     ax_image: plt.Axes = fig.add_subplot(111)
     ax_image.grid(True)
@@ -49,12 +49,6 @@ def vizualization(model: RobotBosch, q):
         y.append(model.fk(qi)[1])
     ax_image.plot(x[:],y[:],'x', color = 'tab:red')
 
-    x_arr, y_arr = [],[]
-    for point in p.points:
-        x_arr.append(point[0])
-        y_arr.append(point[1])
-    
-    ax_image.plot(x_arr[:],y_arr[:],'o', color = 'tab:green')
     plt.show() #block = False
 
 if __name__ == "__main__":

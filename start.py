@@ -2,7 +2,6 @@ from ctu_bosch_sr450 import RobotBosch
 import numpy as np
 
 from line import Line
-from ik import ClosestIK, LimitPi
 from plan import Plan
 
 robot = RobotBosch()  # initialize object without connection to the robot
