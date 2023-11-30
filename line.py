@@ -1,12 +1,18 @@
 import numpy as np
 
 class Line():
-    def __init__(self,
-        points) -> None:
+    def __init__(self) -> None:
+        self.points = []
+
+    def SetPoints(self, points:list):
         self.points = points
 
-    #work with path
-    #load from file
+    def ReadFile(self, name:str):
+        f = open(name)
+        lines = f.readlines()
+        for line in lines:
+            coords = line.split(' ')
+            self.points.append([float(coords[0]),float(coords[1])])
 
     def Interpolate(self, dist):
         pointsnew = []
@@ -21,3 +27,4 @@ class Line():
                 pointsnew.append(point)
         pointsnew.append(self.points[-1])
         self.points = pointsnew
+

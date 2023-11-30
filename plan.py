@@ -89,7 +89,9 @@ def vizualization(model: RobotBosch, q, height_diff):
 
 if __name__ == "__main__":
     model = RobotBosch(tty_dev=None)
-    p = Line([[0, -0.4],[0.3,0],[0,0.4],[0.4,0],[0.1, -0.4]])
+    p = Line()
+    p.ReadFile('points.txt')
+    #p.SetPoints([[0, -0.4],[0.3,0],[0,0.4],[0.4,0],[0.1, -0.4]])
     #p = Line([[0.45,0],[0.2,0],[0.35,0.1]])
 
     Plan(p, 0.01)
