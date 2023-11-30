@@ -26,3 +26,28 @@ def SortIK(robot: RobotBosch ,target, current):
     if len(q) == 0: #No solution
         return []
     return q
+
+def GetOrientation(q):
+    return int(-np.sign(q[1]))
+
+def IKinOrientation(model: RobotBosch, c,p,current, height):
+    qs = SortIK(model, [p[0],p[1],height,0],current)
+    if len(qs) == 0: return []
+
+    if c == 0:
+        return qs[0]
+    for q in qs:
+        if GetOrientation(q) == c or GetOrientation(q) == 0:
+            return q
+    return []
+
+def ChangeConfig(robot:RobotBosch, config, config_next, q, point, high, low):
+
+    q_u = IKinOrientation(robot, config,point,q[-1], high) #možná takto to bude lepsi?
+    q_ch = IKinOrientation(robot, config_next,point,q_u, high)
+    q_d = IKinOrientation(robot, config_next,point,q_ch, low)
+    #print(q_u)
+    #print(q_ch)
+    #print(q_d)
+
+    return q_u,q_ch,q_d

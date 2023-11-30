@@ -2,59 +2,42 @@ from ctu_bosch_sr450 import RobotBosch
 import numpy as np
 
 from line import Line
-from ik import SortIK
+from ik import IKinOrientation, GetOrientation, ChangeConfig
 import matplotlib.pyplot as plt
 
-def GetOrientation(q):
-    return int(-np.sign(q[1]))
-
-def IKinOrientation(model: RobotBosch, c,p,current, high):
-    qs = SortIK(model, [p[0],p[1],high,0],current)
-    if len(qs) == 0: return []
-
-    if c == 0:
-        return qs[0]
-    for q in qs:
-        if GetOrientation(q) == c or GetOrientation(q) == 0:
-            return q
-    return []
-
-def ChangeConfig(robot:RobotBosch, config, config_next, q, line: Line, i):
-    size_of = 0.5
-    base = 0.2
-
-    q_u = IKinOrientation(robot, config,line.points[i-1],q[-1], size_of) #možná takto to bude lepsi?
-    q_ch = IKinOrientation(robot, config_next,line.points[i-1],q_u, size_of)
-    q_d = IKinOrientation(robot, config_next,line.points[i-1],q_ch, base)
-    #print(q_u)
-    #print(q_ch)
-    #print(q_d)
-
-    return q_u,q_ch,q_d
-
-
-def Plan(line:Line, interdist):
+def Plan(line:Line, interdist, high = 0.5, low = 0.4):
     line.Interpolate(interdist)
 
     model = RobotBosch(tty_dev=None)
-    high = 0.2
-    size_of = 0.3
     
+    q = GenerateQ(model, line, low)
+    if len(q) == 1:
+        return q
+
+    q = InsertExtra(model, q, line, high, low)
+    q = InsertEnds(q,line,high)
+
+    vizualization(model, q, (high+low)/2)
+    
+    return q
+
+def GenerateQ(model: RobotBosch, line:Line, low):
     for c in [-1,1,0]: #configurations
         q = [[0,0,0,0]]
         for p in line.points: #for each point on line
-            qp = IKinOrientation(model, c,p,q[-1], high) #try finding q in configuration
+            qp = IKinOrientation(model, c,p,q[-1], low) #try finding q in configuration
             if len(qp) == 0:
                 break
             else:
                 q.append(qp)
 
         if len(q) == len(line.points)+1:
-            break
-        elif (c == 0):
-            print("No IK")
-            return [[0,0,0,0]]
+            return q
+        
+    print("No IK")
+    return [[0,0,0,0]] #No solution
 
+def InsertExtra(model: RobotBosch, q, line:Line, high, low):
     indexes = []
     changes = 0
     #asi by to chtelo nejdřiv detekovat počet zmen a pak je tam teprv konkrétně doplnit?
@@ -70,7 +53,7 @@ def Plan(line:Line, interdist):
 
         c = GetOrientation(q[indexes[i]])
         c_next = GetOrientation(q[indexes[i]+1])
-        up, changed, down = ChangeConfig(model, c, c_next, q, line, indexes[i])
+        up, changed, down = ChangeConfig(model, c, c_next, q, line.points[indexes[i]-1], high, low)
 
         q.insert(indexes[i]+1, up)
         q.insert(indexes[i]+2, changed)
@@ -78,16 +61,16 @@ def Plan(line:Line, interdist):
         line.points.insert(indexes[i], line.points[indexes[i]-1])
         line.points.insert(indexes[i], line.points[indexes[i]-1])
         line.points.insert(indexes[i], line.points[indexes[i]-1])
-
-    q_first = IKinOrientation(model, GetOrientation(q[1]),line.points[0],q[0], size_of)
-    q.insert(1,q_first)
-    q_last = IKinOrientation(model, GetOrientation(q[-1]),line.points[-1],q[-1], size_of)
-    q.append(q_last)
-    vizualization(model, q)
-    
     return q
 
-def vizualization(model: RobotBosch, q):
+def InsertEnds(q, line, high):
+    q_first = IKinOrientation(model, GetOrientation(q[1]),line.points[0],q[0], high)
+    q.insert(1,q_first)
+    q_last = IKinOrientation(model, GetOrientation(q[-1]),line.points[-1],q[-1], high)
+    q.append(q_last)
+    return q
+
+def vizualization(model: RobotBosch, q, height_diff):
     if len(q[-1]) != 4:
         return
     fig: plt.Figure = plt.figure()
@@ -96,11 +79,10 @@ def vizualization(model: RobotBosch, q):
     color = ['tab:blue' , 'tab:green', 'tab:red']
     touching = ['x', '.']
     size = [5,7]
-    h = 0.3
     for qi in q:
         x = model.fk(qi)[0]
         y = model.fk(qi)[1]
-        z = model.fk(qi)[2] >= h
+        z = model.fk(qi)[2] >= height_diff
         ax_image.plot(x,y,touching[z],ms = size[z], color = color[GetOrientation(qi)])
 
     plt.show() #block = False
