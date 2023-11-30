@@ -2,7 +2,7 @@ from ctu_bosch_sr450 import RobotBosch
 import numpy as np
 
 from line import Line
-from ik import SortIK, LimitPi
+from ik import SortIK
 import matplotlib.pyplot as plt
 
 def GetOrientation(q):
@@ -10,6 +10,8 @@ def GetOrientation(q):
 
 def IKinOrientation(model: RobotBosch, c,p,current, high):
     qs = SortIK(model, [p[0],p[1],high,0],current)
+    if len(qs) == 0: return []
+
     if c == 0:
         return qs[0]
     for q in qs:
@@ -43,13 +45,15 @@ def Plan(line:Line, interdist):
         for p in line.points: #for each point on line
             qp = IKinOrientation(model, c,p,q[-1], high) #try finding q in configuration
             if len(qp) == 0:
-                print("No IK")
                 break
             else:
                 q.append(qp)
 
         if len(q) == len(line.points)+1:
             break
+        elif (c == 0):
+            print("No IK")
+            return [[0,0,0,0]]
 
     indexes = []
     changes = 0
@@ -84,17 +88,20 @@ def Plan(line:Line, interdist):
     return q
 
 def vizualization(model: RobotBosch, q):
+    if len(q[-1]) != 4:
+        return
     fig: plt.Figure = plt.figure()
     ax_image: plt.Axes = fig.add_subplot(111)
     ax_image.grid(True)
     color = ['tab:blue' , 'tab:green', 'tab:red']
     touching = ['x', '.']
+    size = [5,7]
     h = 0.3
     for qi in q:
         x = model.fk(qi)[0]
         y = model.fk(qi)[1]
         z = model.fk(qi)[2] >= h
-        ax_image.plot(x,y,touching[z], color = color[GetOrientation(qi)])
+        ax_image.plot(x,y,touching[z],ms = size[z], color = color[GetOrientation(qi)])
 
     plt.show() #block = False
 
@@ -103,6 +110,6 @@ if __name__ == "__main__":
     p = Line([[0, -0.4],[0.3,0],[0,0.4],[0.4,0],[0.1, -0.4]])
     #p = Line([[0.45,0],[0.2,0],[0.35,0.1]])
 
-    #Plan(p, 0.01)
-    for pi in Plan(p, 0.1):
-        print(pi, GetOrientation(pi), model.fk(pi))
+    Plan(p, 0.01)
+    #for pi in Plan(p, 0.1):
+        #print(pi, GetOrientation(pi), model.fk(pi))
