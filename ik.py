@@ -33,7 +33,7 @@ def GetOrientation(q):
 def IKinOrientation(model: RobotBosch, c,p,current, height):
     if (c == -1):
         x = p[0] + 0.015
-        y = p[1] + 0.01
+        y = p[1] * 1.065
     else:
         x = p[0]
         y = p[1]
