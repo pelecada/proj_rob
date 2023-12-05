@@ -15,7 +15,7 @@ def Plan(line:Line, interdist, high = 0.5, low = 0.4):
         return q
 
     q = InsertExtra(model, q, line, high, low) #Add extra qs for configuration changes
-    q = InsertEnds(q,line,high) #Add lifted ends of line
+    q = InsertEnds(model, q, line, high) #Add lifted ends of line
 
     vizualization(model, q, (high+low)/2) #Visualize
     
@@ -60,7 +60,7 @@ def InsertExtra(model: RobotBosch, q, line:Line, high, low):
         line.points.insert(indexes[i], line.points[indexes[i]-1])
     return q
 
-def InsertEnds(q, line, high):
+def InsertEnds(model: RobotBosch, q, line, high):
     q_first = IKinOrientation(model, GetOrientation(q[1]),line.points[0],q[0], high) #Add lifted point at start
     q.insert(1,q_first)
     q_last = IKinOrientation(model, GetOrientation(q[-1]),line.points[-1],q[-1], high) #Add lifted point at the end
