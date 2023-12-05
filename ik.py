@@ -32,10 +32,13 @@ def GetOrientation(q):
 
 def IKinOrientation(model: RobotBosch, c,p,current, height):
     if (c == -1):
-        p[0] += 0.015
-        p[1] += 0.01
+        x = p[0] + 0.015
+        y = p[1] + 0.01
+    else:
+        x = p[0]
+        y = p[1]
 
-    qs = SortIK(model, [p[0],p[1],height,0],current)
+    qs = SortIK(model, [x,y,height,0],current)
     if len(qs) == 0: return []
 
     if c == 0:
@@ -47,7 +50,7 @@ def IKinOrientation(model: RobotBosch, c,p,current, height):
 
 def ChangeConfig(robot:RobotBosch, config, config_next, q, point, high, low):
 
-    q_u = IKinOrientation(robot, config,point,q[-1], high) #možná takto to bude lepsi?
+    q_u = IKinOrientation(robot, config,point, q, high)
     q_ch = IKinOrientation(robot, config_next,point,q_u, high)
     q_d = IKinOrientation(robot, config_next,point,q_ch, low)
     #print(q_u)

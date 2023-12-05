@@ -60,7 +60,7 @@ def InsertExtra(model: RobotBosch, q, line:Line, high, low):
 
         c = GetOrientation(q[indexes[i]])
         c_next = GetOrientation(q[indexes[i]+1])
-        up, changed, down = ChangeConfig(model, c, c_next, q, line.points[indexes[i]-1], high, low) #Make needed new qs
+        up, changed, down = ChangeConfig(model, c, c_next, q[indexes[i]], line.points[indexes[i]-1], high, low) #Make needed new qs
 
         q.insert(indexes[i]+1, up) #Insert in q
         q.insert(indexes[i]+2, changed)
@@ -70,9 +70,9 @@ def InsertExtra(model: RobotBosch, q, line:Line, high, low):
         line.points.insert(indexes[i], line.points[indexes[i]-1])
     return q
 
-def InsertEnds(model: RobotBosch, q, line, high):
+def InsertEnds(model: RobotBosch, q, line: Line, high):
     q_first = IKinOrientation(model, GetOrientation(q[1]),line.points[0],q[0], high) #Add lifted point at start
-    q.insert(1,q_first)
+    q.insert(1, q_first)
     q_last = IKinOrientation(model, GetOrientation(q[-1]),line.points[-1],q[-1], high) #Add lifted point at the end
     q.append(q_last)
     return q
