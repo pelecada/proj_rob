@@ -23,11 +23,21 @@ def Plan(line:Line, interdist, high = 0.5, low = 0.4):
 
 def GenerateQ(model: RobotBosch, line:Line, low):
     for c in [-1,1,0]: #Configuration (1st, 2nd, Any)
+        c_current = c
+        if c == 0:
+            c_current = 1
         q = [[0,0,0,0]] #Default (soft home)
         for p in line.points: #For each point on line
-            qp = IKinOrientation(model, c,p,q[-1], low) #Try finding q in configuration
+            qp = IKinOrientation(model, c_current ,p,q[-1], low) #Try finding q in configuration
             if len(qp) == 0: #If not found
-                break
+                if c == 0:
+                    c_current = -c_current
+                    qp = IKinOrientation(model, c_current ,p,q[-1], low)
+                    if len(qp) == 0:
+                        break
+                else:
+                    break
+            c_current = GetOrientation(qp)
             q.append(qp) #Q valid for the point and configuration
 
         if len(q) == len(line.points)+1: #If all points have valid q
