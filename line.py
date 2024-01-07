@@ -32,10 +32,13 @@ class Line():
             that = self.points[i+1]
             distance = np.linalg.norm(np.array(this)-np.array(that)) #Get distance
             point_number = int(distance//dist) #Count how many points are needed for the distance
-            #print(point_number)
-            for t in range(point_number): #Interpolate (from a to b-1)
-                point = [this[0] + t/point_number*(that[0]-this[0]),this[1] + t/point_number*(that[1]-this[1])]
-                pointsnew.append(point)
+            if (point_number == 0):
+                pointsnew.append(this)
+            else:
+                #print(point_number)
+                for t in range(point_number): #Interpolate (from a to b-1)
+                    point = [this[0] + t/point_number*(that[0]-this[0]),this[1] + t/point_number*(that[1]-this[1])]
+                    pointsnew.append(point)
         pointsnew.append(self.points[-1]) #Add last point at the end
         self.points = pointsnew #Overwrite
 
