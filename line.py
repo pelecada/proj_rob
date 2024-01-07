@@ -10,9 +10,20 @@ class Line():
     def ReadFile(self, name:str): #Add points from file (line with floats "x y")
         f = open(name)
         lines = f.readlines()
-        for line in lines:
-            coords = line.split(' ')
-            self.points.append([float(coords[0]),float(coords[1])])
+        if(lines[0].split(' ')[0] == "poly"):
+            words = lines[0].split(' ')
+            n = int(words[1])
+            x = float(words[2])
+            y = float(words[3])
+            r = float(words[4])
+            a = float(words[5])
+            for i in range(n):
+                self.points.append([np.cos(i*2*np.pi/n + a)*r+x,np.sin(i*2*np.pi/n + a)*r+y])
+            self.points.append([np.cos(a)*r+x,np.sin(a)*r+y])
+        else:
+            for line in lines:
+                coords = line.split(' ')
+                self.points.append([float(coords[0]),float(coords[1])])
 
     def Interpolate(self, dist): # Add points so their distance is less than required
         pointsnew = []
