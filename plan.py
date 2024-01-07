@@ -1,3 +1,5 @@
+#Plan IKs for Line specified, vizualization
+
 from ctu_bosch_sr450 import RobotBosch
 import numpy as np
 
@@ -14,33 +16,33 @@ def Plan(line:Line, interdist, high = 0.5, low = 0.4):
     if len(q) == 1: #If failed, give soft home
         return q
 
-    q = InsertExtra(model, q, line, high, low) #Add extra qs for configuration changes
+    q = InsertExtra(model, q, line, high, low) #Add extra IKs for configuration changes
     q = InsertEnds(model, q, line, high) #Add lifted ends of line
 
-    vizualization(model, q, (high+low)/2) #Visualize
+    Vizualization(model, q, (high+low)/2) #Visualize
     
     return q
 
 def GenerateQ(model: RobotBosch, line:Line, low):
     for c in [-1,1,0]: #Configuration (1st, 2nd, Any)
         c_current = c
-        if c == 0:
+        if c == 0: #Initialize to some configuration
             c_current = 1
         q = [[0,0,0,0]] #Default (soft home)
         for p in line.points: #For each point on line
-            qp = IKinOrientation(model, c_current ,p,q[-1], low) #Try finding q in configuration
+            qp = IKinOrientation(model, c_current ,p,q[-1], low) #Try finding IK in configuration
             if len(qp) == 0: #If not found
-                if c == 0:
+                if c == 0: #If doesn't matter, change searched configuration
                     c_current = -c_current
                     qp = IKinOrientation(model, c_current ,p,q[-1], low)
                     if len(qp) == 0:
                         break
-                else:
+                else: #Try again in different configuration
                     break
             c_current = GetOrientation(qp)
-            q.append(qp) #Q valid for the point and configuration
+            q.append(qp) #IK valid for the point and configuration
 
-        if len(q) == len(line.points)+1: #If all points have valid q
+        if len(q) == len(line.points)+1: #If all points have valid IK, finish
             return q
         
     print("No IK")
@@ -48,7 +50,7 @@ def GenerateQ(model: RobotBosch, line:Line, low):
 
 def InsertExtra(model: RobotBosch, q, line:Line, high, low):
 
-    indexes = [] #Indexes where extra qs are needed
+    indexes = [] #Indexes where extra IKs are needed
     for i in range(len(q)-1):
         c = GetOrientation(q[i])
         c_next = GetOrientation(q[i+1])        
@@ -62,10 +64,10 @@ def InsertExtra(model: RobotBosch, q, line:Line, high, low):
         c_next = GetOrientation(q[indexes[i]+1])
         up, changed, down = ChangeConfig(model, c, c_next, q[indexes[i]], line.points[indexes[i]-1], high, low) #Make needed new qs
 
-        q.insert(indexes[i]+1, up) #Insert in q
+        q.insert(indexes[i]+1, up) #Insert new points in IK
         q.insert(indexes[i]+2, changed)
         q.insert(indexes[i]+3, down)
-        line.points.insert(indexes[i], line.points[indexes[i]-1]) #Insert in line
+        line.points.insert(indexes[i], line.points[indexes[i]-1]) #Insert in line (mostly because of visualization)
         line.points.insert(indexes[i], line.points[indexes[i]-1])
         line.points.insert(indexes[i], line.points[indexes[i]-1])
     return q
@@ -77,13 +79,13 @@ def InsertEnds(model: RobotBosch, q, line: Line, high):
     q.append(q_last)
     return q
 
-def vizualization(model: RobotBosch, q, height_diff):
-    if len(q[-1]) != 4: #If q is not valid
+def Vizualization(model: RobotBosch, q, height_diff):
+    if len(q[-1]) != 4: #If IK is not valid
         return
     fig: plt.Figure = plt.figure()
     ax_image: plt.Axes = fig.add_subplot(111)
     ax_image.grid(True)
-    color = ['tab:blue' , 'tab:green', 'tab:red'] #Colours of configuration
+    color = ['tab:blue' , 'tab:green', 'tab:red'] #Colours of configurations
     touching = ['x', '.'] #Shape dependent on height
     size = [5,7]
     for qi in q:
@@ -92,15 +94,11 @@ def vizualization(model: RobotBosch, q, height_diff):
         z = model.fk(qi)[2] >= height_diff
         ax_image.plot(x,y,touching[z],ms = size[z], color = color[GetOrientation(qi)])
 
-    plt.show() #block = False
+    plt.show() 
 
 if __name__ == "__main__":
-    model = RobotBosch(tty_dev=None)
     p = Line()
     p.ReadFile('points.txt')
     #p.SetPoints([[0, -0.4],[0.3,0],[0,0.4],[0.4,0],[0.1, -0.4]])
-    #p = Line([[0.45,0],[0.2,0],[0.35,0.1]])
 
     Plan(p, 0.01)
-    #for pi in Plan(p, 0.1):
-        #print(pi, GetOrientation(pi), model.fk(pi))
