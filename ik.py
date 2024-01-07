@@ -31,15 +31,7 @@ def GetOrientation(q):
     return int(-np.sign(q[1]))
 
 def IKinOrientation(model: RobotBosch, c,p,current, height):
-    if (c == -1):
-        ##d = np.linalg.norm([p[0],p[1]])
-        y = p[1] * 1.064        #1.064 almost :)        ## * (1+0.015/d)
-        x = p[0] +  0.013       #0.013          #+0.010 + abs(y)*0.003/0.22 ## * (1+0.02/d)
-    else:
-        x = p[0]
-        y = p[1]
-
-    qs = SortIK(model, [x,y,height,0],current)
+    qs = SortIK(model, [p[0],p[1],height,0],current)
     if len(qs) == 0: return []
 
     if c == 0:
